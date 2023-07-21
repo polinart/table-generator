@@ -1,0 +1,26 @@
+.app {
+  text-align: center;
+}
+
+.add-record-form {
+  margin-bottom: 20px;
+}
+
+.record-table {
+  margin: 0 auto;
+  border-collapse: collapse;
+}
+
+.record-table th,
+.record-table td {
+  padding: 8px;
+  border: 1px solid #ddd;
+}
+
+.record-table th {
+  background-color: #f2f2f2;
+}
+
+.record-table button {
+  margin-left: 5px;
+}

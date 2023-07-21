@@ -1,0 +1,21 @@
+.app {
+    margin-top: 40px;
+}
+.form {
+    // width: 200px; // Ширина формы
+    margin: auto; // Центрирование формы
+    padding: 16px; // Внутренний отступ формы
+    border: 1px solid #444343; // Бордер формы
+    border-radius: 8px; // Скругление углов формы
+    background: #fff; // Фон формы
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); // Тень формы
+  
+    & .MuiTextField-root {
+      margin-bottom: 16px; // Расстояние между инпутами
+    }
+  
+    .MuiButton-root {
+      width: 100%; // Кнопка занимает всю ширину формы
+    }
+  }
+  

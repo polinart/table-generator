@@ -1,0 +1,63 @@
+body {
+  background-color: #e5e8ed;
+  margin: 0;
+  padding: 0;
+}
+
+.table-container {
+  .table {
+    background-color: white;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+
+    td {
+      border: 1px solid rgba(224, 224, 224, 1);
+    }
+
+    .table-head {
+      background-color: #1c508b;
+      border: 1px solid rgba(224, 224, 224, 1);
+      
+      & th {
+        color: white;
+      }
+    }
+
+    .table-delete-btn {
+      color: #b02f3d;
+    }
+  }  
+}
+
+.form-container {
+  margin-bottom: 20px;
+  .form {
+    // width: 200px; // Ширина формы
+    margin: auto; // Центрирование формы
+    padding: 16px; // Внутренний отступ формы
+    // border: 1px solid #444343; // Бордер формы
+    border-radius: 4px; // Скругление углов формы
+    background: #fff; // Фон формы
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); // Тень формы
+  
+    .form-select, .form-input {
+      margin-bottom: 16px; // Расстояние между инпутами
+      width: 100%;
+    }
+
+    .form-button {
+      height: 48px; /* Установите желаемую высоту */
+      width: 100%;
+    }
+  }
+}
+
+
+.full-width-button {
+  width: 100%;
+}
+
+.app {
+  margin-top: 40px;
+}
