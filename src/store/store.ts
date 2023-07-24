@@ -1,9 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import copiedTablesReducer from './slices/copiedTablesSlices';
-import tablesDataSliceReducer from './slices/tablesDataSlice';
-
+import copiedTablesReducer from '../slices/copiedTablesSlices';
+import tablesDataSliceReducer from '../slices/tablesDataSlice';
 
 const persistedTablesDataReducer = persistReducer(
   {

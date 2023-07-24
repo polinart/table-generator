@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   TextField,
   Button,
@@ -11,9 +11,10 @@ import { Record } from '../interfaces/Record';
 
 interface AddRecordFormProps {
     onSave: (record: Record) => void;
-    initialValues?: Record | null;
+    formData: Record;
+    setFormData: React.Dispatch<React.SetStateAction<Record>>;
+    inputWidth?: 'full' | 'half';
     submitText?: string;
-    isNewRecord?: boolean;
 }
 
 const citiesLatvia = [
@@ -29,17 +30,14 @@ const citiesLatvia = [
     'Ogre',
   ];
 
-const AddRecordForm: React.FC<AddRecordFormProps> = ({
+const RecordForm: React.FC<AddRecordFormProps> = ({
     onSave,
-    initialValues,
-    isNewRecord,
+    formData,
+    setFormData,
+    inputWidth = 'full',
     submitText = 'Add',
   }) => {
   
-    const [name, setName] = useState('');
-    const [surname, setSurname] = useState('');
-    const [age, setAge] = useState('');
-    const [city, setCity] = useState('');
     const [nameError, setNameError] = useState(false);
     const [surnameError, setSurnameError] = useState(false);
     const [ageError, setAgeError] = useState(false);
@@ -54,65 +52,43 @@ const AddRecordForm: React.FC<AddRecordFormProps> = ({
     const cityHelperText = 'Please select a city.';
     
     const handleNameBlur = () => {
-      setNameError(!validateName(name));
+      setNameError(!validateName(formData.name));
     };
     const handleSurnameBlur = () => {
-      setSurnameError(!validateSurname(surname));
+      setSurnameError(!validateSurname(formData.surname));
     };
     const handleAgeBlur = () => {
-      setAgeError(!validateAge(age));
+      setAgeError(!validateAge(formData.age as string));
     };
     const handleCityBlur = () => {
-      setCityError(city === '');
+      setCityError(formData.city === '');
     };
   
-    useEffect(() => {
-      if (initialValues) {
-        setName(initialValues.name);
-        setSurname(initialValues.surname);
-        setAge(initialValues.age.toString());
-        setCity(initialValues.city);
-      } else {
-        // Добавьте очистку полей, если нет initialValues
-        setName('');
-        setSurname('');
-        setAge('');
-        setCity('');
-      }
-    }, [initialValues]);
-  
     const isFormValid = () => {
-      const isNameValid = validateName(name);
-      const isSurnameValid = validateSurname(surname);
-      const isAgeValid = validateAge(age);
-      const isCityValid = city !== '';
+      const isNameValid = validateName(formData.name);
+      const isSurnameValid = validateSurname(formData.surname);
+      const isAgeValid = validateAge(formData.age as string);
+      const isCityValid = formData.city !== '';
   
-      // Проверяем, что все поля валидны
       return isNameValid && isSurnameValid && isAgeValid && isCityValid;
     };
   
     const handleAddRecord = (e: React.FormEvent) => {
-      const isNameValid = validateName(name);
-      const isSurnameValid = validateSurname(surname);
-      const isAgeValid = validateAge(age);
-      const isCityValid = city !== '';
+      const isNameValid = validateName(formData.name);
+      const isSurnameValid = validateSurname(formData.surname);
+      const isAgeValid = validateAge(formData.age as string);
+      const isCityValid = formData.city !== '';
   
       if (isFormValid()) {
         const newRecord: Record = {
-          id: isNewRecord ? Date.now() : initialValues?.id || Date.now(),
-          name,
-          surname,
-          age: parseInt(age),
-          city,
+          ...formData,
+          id: formData?.id || Date.now(),
         };
   
         onSave(newRecord);
   
         // Очищаем поля формы
-        setName('');
-        setSurname('');
-        setAge('');
-        setCity('');
+        setFormData({ id: 0, name: '', surname: '', age: '', city: ''  })
       }
   
       setNameError(!isNameValid);
@@ -120,51 +96,54 @@ const AddRecordForm: React.FC<AddRecordFormProps> = ({
       setAgeError(!isAgeValid);
       setCityError(!isCityValid);
     };
-  
+
+  const handleInputChange = (value: string | number, key: string) => {
+    setFormData((prevData) => ({ ...prevData, [key]: value }));
+  };
+
+  const inputClass = inputWidth === 'half' ? 'half-width-input' : 'full-width-input';
+  const selectStyle: React.CSSProperties = inputWidth === 'half' ? { width: '50%' } : { width: '100%' };
+
     return (
       <div className='form-container'>
       <form className='form'>
         <TextField
-          className="form-input"
+          className={`form-input ${inputClass}`}
           placeholder="Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          fullWidth
+          value={formData.name}
+          onChange={(e) => handleInputChange(e.target.value, 'name')}
           required
           error={nameError} // Показываем ошибку, если поле не валидно
           helperText={nameError && nameHelperText} // Показываем сообщение об ошибке
           onBlur={handleNameBlur}
         />
         <TextField
-          className="form-input"
+          className={`form-input ${inputClass}`}
           placeholder="Surname"
-          value={surname}
-          onChange={(e) => setSurname(e.target.value)}
-          fullWidth
+          value={formData.surname}
+          onChange={(e) => handleInputChange(e.target.value, 'surname')}
           required
           error={surnameError} // Показываем ошибку, если поле не валидно
           helperText={surnameError && surnameHelperText} // Показываем сообщение об ошибке
           onBlur={handleSurnameBlur}
         />
         <TextField
-          className="form-input"
+          className={`form-input ${inputClass}`}
           placeholder="Age"
-          value={age}
-          onChange={(e) => setAge(e.target.value)}
+          value={formData.age}
+          onChange={(e) => handleInputChange(e.target.value, 'age')}
           inputProps={{ min: 1, max: 150 }}
-          fullWidth
           required
           error={ageError} // Показываем ошибку, если поле не валидно
           helperText={ageError && ageHelperText} // Показываем сообщение об ошибке
           onBlur={handleAgeBlur}
         />
-         <FormControl className="form-select" error={cityError}>
+         <FormControl className="form-select" style={selectStyle} error={cityError}>
             <Select
-              className="form-input"
-              value={city}
-              onChange={(e) => setCity(e.target.value as string)}
+              value={formData.city}
               displayEmpty
               onBlur={handleCityBlur} 
+              onChange={(e) => handleInputChange(e.target.value as string, 'city')}
             >
               <MenuItem value="" disabled>
                 Select a city
@@ -191,4 +170,5 @@ const AddRecordForm: React.FC<AddRecordFormProps> = ({
     );
 };
 
-export default AddRecordForm;
+export default RecordForm;
+

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Dialog,
@@ -14,8 +14,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TableCell from '@mui/material/TableCell';
-import { Record } from '../interfaces/Record';
-import AddRecordForm from './AddRecordForm';
+import { Record, emptyRecord } from '../interfaces/Record';
+import RecordForm from './RecordForm';
 
 interface CopiedTablesComponentProps {
   copiedTables: Record[][];
@@ -31,13 +31,15 @@ const CopiedTablesComponent: React.FC<CopiedTablesComponentProps> = ({
   onDeleteTable,
 }) => {
 
-    const [editRecord, setEditRecord] = React.useState<Record | null>(null);
-  const [deleteRecordId, setDeleteRecordId] = React.useState<number | null>(null);
-  const [tableId, setTableId] = React.useState<number | null>(null);
+  const [editRecord, setEditRecord] = useState<Record>(emptyRecord);
+  const [deleteRecordId, setDeleteRecordId] = useState<number | null>(null);
+  const [tableId, setTableId] = useState<number | null>(null);
+  const [openModal, setOpenModal] = useState(false);
 
   const handleEditClick = (tableIndex: number, record: Record) => {
     setEditRecord(record);
     setTableId(tableIndex);
+    setOpenModal(true);
   };
 
   const handleDeleteClick = (tableIndex: number, id: number) => {
@@ -48,12 +50,9 @@ const CopiedTablesComponent: React.FC<CopiedTablesComponentProps> = ({
   const handleEditRecord = (record: Record) => {
     if (tableId !== null) {
         onEditRecord(tableId, record);
-        setEditRecord(null);
+        setEditRecord(emptyRecord);
+        setOpenModal(false);
     }
-  };
-
-  const handleDeleteRecord = (tableIndex: number, id: number) => {
-    onDeleteRecord(tableIndex, id);
   };
 
   const handleDeleteConfirm = () => {
@@ -131,11 +130,11 @@ const CopiedTablesComponent: React.FC<CopiedTablesComponentProps> = ({
         </DialogActions>
       </Dialog>
       {/* Edit Record Dialog */}
-      <Dialog open={editRecord !== null} onClose={() => setEditRecord(null)}>
-        <DialogTitle>Edit Record</DialogTitle>
+      <Dialog open={openModal} onClose={() => setEditRecord(emptyRecord)}>
+        <DialogTitle>Edit Record copied table</DialogTitle>
         <DialogContent>
           {/* Pass the record to edit as initial values */}
-          <AddRecordForm isNewRecord={false} initialValues={editRecord} onSave={handleEditRecord} submitText="Agree"/>
+          <RecordForm formData={editRecord} setFormData={setEditRecord} onSave={handleEditRecord} submitText="Agree"/>
         </DialogContent>
       </Dialog>
     </>

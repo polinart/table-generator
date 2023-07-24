@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Dialog,
@@ -15,19 +15,21 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import TableCell from '@mui/material/TableCell';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../store';
+import { RootState } from '../store/store';
 import { editRecordAction, deleteRecordAction } from '../slices/tablesDataSlice';
-import { Record } from '../interfaces/Record';
-import AddRecordForm from './AddRecordForm';
+import { Record, emptyRecord } from '../interfaces/Record';
+import RecordForm from './RecordForm';
 
 const TableComponent: React.FC = () => {
   const data = useSelector((state: RootState) => state.tablesData.data);
   const dispatch = useDispatch();
-  const [editRecord, setEditRecord] = React.useState<Record | null>(null);
-  const [deleteRecordId, setDeleteRecordId] = React.useState<number | null>(null);
+  const [editRecord, setEditRecord] = useState<Record>(emptyRecord);
+  const [deleteRecordId, setDeleteRecordId] = useState<number | null>(null);
+  const [openModal, setOpenModal] = useState(false);
 
   const handleEditClick = (record: Record) => {
     setEditRecord(record);
+    setOpenModal(true);
   };
 
   const handleDeleteClick = (id: number) => {
@@ -36,7 +38,8 @@ const TableComponent: React.FC = () => {
 
   const handleEditRecord = (editedRecord: Record) => {
     dispatch(editRecordAction(editedRecord));
-    setEditRecord(null);
+    setEditRecord(emptyRecord);
+    setOpenModal(false);
   };
 
   const handleDeleteConfirm = () => {
@@ -69,7 +72,6 @@ const TableComponent: React.FC = () => {
                   <TableCell>{record.age}</TableCell>
                   <TableCell>{record.city}</TableCell>
                   <TableCell align="center">
-                    {/* Edit and Delete buttons */}
                     <Button
                       className="table-edit-btn"
                       onClick={() => handleEditClick(record)}
@@ -101,11 +103,11 @@ const TableComponent: React.FC = () => {
         </DialogActions>
       </Dialog>
       {/* Edit Record Dialog */}
-      <Dialog open={editRecord !== null} onClose={() => setEditRecord(null)}>
-        <DialogTitle>Edit Record</DialogTitle>
+      <Dialog open={openModal} onClose={() => setEditRecord(emptyRecord)}>
+        <DialogTitle>Edit Record in Main Table</DialogTitle>
         <DialogContent>
           {/* Pass the record to edit as initial values */}
-          <AddRecordForm isNewRecord={false} initialValues={editRecord} onSave={handleEditRecord} submitText="Agree"/>
+          <RecordForm formData={editRecord} setFormData={setEditRecord} onSave={handleEditRecord} submitText="Agree"/>
         </DialogContent>
       </Dialog>
       </Grid>

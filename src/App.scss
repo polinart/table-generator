@@ -43,6 +43,18 @@ body {
   
     .form-select, .form-input {
       margin-bottom: 16px; // Расстояние между инпутами
+
+      .MuiInputBase-formControl {
+        margin: 0 5px;
+      }
+    }
+
+    /* styles.css */
+    .half-width-input {
+      width: 50%;
+    }
+
+    .full-width-input {
       width: 100%;
     }
 
