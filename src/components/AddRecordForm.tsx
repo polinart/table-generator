@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
 import {
   TextField,
   Button,
@@ -9,7 +8,6 @@ import {
   FormHelperText,
 } from '@mui/material';
 import { Record } from '../interfaces/Record';
-import { tableDataSubject, tableDataKey } from '../data/tableDataSubject';
 
 interface AddRecordFormProps {
     onSave: (record: Record) => void;
@@ -69,13 +67,6 @@ const AddRecordForm: React.FC<AddRecordFormProps> = ({
     };
   
     useEffect(() => {
-      const storedData = localStorage.getItem(tableDataKey);
-      if (storedData) {
-        setTableData(JSON.parse(storedData));
-      }
-    }, []);
-  
-    useEffect(() => {
       if (initialValues) {
         setName(initialValues.name);
         setSurname(initialValues.surname);
@@ -89,11 +80,6 @@ const AddRecordForm: React.FC<AddRecordFormProps> = ({
         setCity('');
       }
     }, [initialValues]);
-  
-    const setTableData = (data: Record[]) => {
-      localStorage.setItem(tableDataKey, JSON.stringify(data));
-      tableDataSubject.next(data);
-    };
   
     const isFormValid = () => {
       const isNameValid = validateName(name);

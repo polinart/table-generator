@@ -4,7 +4,7 @@ import './App.scss';
 import { Record } from './interfaces/Record';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from './store';
-import { addRecord } from './store'
+import { addRecord } from './slices/tablesDataSlice';
 import { editCopiedRecord, deleteCopiedRecord, deleteCopiedTable, addCopiedTable } from './slices/copiedTablesSlices';  
 import TableComponent from './components/TableComponent';
 import CopiedTablesComponent from './components/CopiedTablesComponent';

@@ -16,7 +16,7 @@ import Paper from '@mui/material/Paper';
 import TableCell from '@mui/material/TableCell';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../store';
-import { editRecordAction, deleteRecordAction } from '../store';
+import { editRecordAction, deleteRecordAction } from '../slices/tablesDataSlice';
 import { Record } from '../interfaces/Record';
 import AddRecordForm from './AddRecordForm';
 
