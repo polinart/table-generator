@@ -23,26 +23,20 @@ body {
         color: white;
       }
     }
-
-    .table-delete-btn {
-      color: #b02f3d;
-    }
   }  
 }
 
 .form-container {
   margin-bottom: 20px;
   .form {
-    // width: 200px; // Ширина формы
-    margin: auto; // Центрирование формы
-    padding: 16px; // Внутренний отступ формы
-    // border: 1px solid #444343; // Бордер формы
-    border-radius: 4px; // Скругление углов формы
-    background: #fff; // Фон формы
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1); // Тень формы
+    margin: auto;
+    padding: 16px;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   
     .form-select, .form-input {
-      margin-bottom: 16px; // Расстояние между инпутами
+      margin-bottom: 16px;
 
       .MuiInputBase-formControl {
         margin: 0 5px;
@@ -59,7 +53,7 @@ body {
     }
 
     .form-button {
-      height: 48px; /* Установите желаемую высоту */
+      height: 48px;
       width: 100%;
     }
   }
@@ -71,4 +65,19 @@ body {
 
 .app {
   margin-top: 40px;
+}
+
+.copied-tables-container {
+  .table-container {
+    margin-bottom: 20px;
+  }
+}
+
+.empty-table-message {
+  text-align: center;
+  padding: 20px;
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 20px;
 }

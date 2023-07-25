@@ -7,7 +7,7 @@ import {
   FormControl,
   FormHelperText,
 } from '@mui/material';
-import { Record } from '../interfaces/Record';
+import { Record, emptyRecord } from '../interfaces/Record';
 
 interface AddRecordFormProps {
     onSave: (record: Record) => void;
@@ -87,8 +87,7 @@ const RecordForm: React.FC<AddRecordFormProps> = ({
   
         onSave(newRecord);
   
-        // Очищаем поля формы
-        setFormData({ id: 0, name: '', surname: '', age: '', city: ''  })
+        setFormData(emptyRecord);
       }
   
       setNameError(!isNameValid);
@@ -113,8 +112,8 @@ const RecordForm: React.FC<AddRecordFormProps> = ({
           value={formData.name}
           onChange={(e) => handleInputChange(e.target.value, 'name')}
           required
-          error={nameError} // Показываем ошибку, если поле не валидно
-          helperText={nameError && nameHelperText} // Показываем сообщение об ошибке
+          error={nameError}
+          helperText={nameError && nameHelperText}
           onBlur={handleNameBlur}
         />
         <TextField
@@ -123,8 +122,8 @@ const RecordForm: React.FC<AddRecordFormProps> = ({
           value={formData.surname}
           onChange={(e) => handleInputChange(e.target.value, 'surname')}
           required
-          error={surnameError} // Показываем ошибку, если поле не валидно
-          helperText={surnameError && surnameHelperText} // Показываем сообщение об ошибке
+          error={surnameError}
+          helperText={surnameError && surnameHelperText}
           onBlur={handleSurnameBlur}
         />
         <TextField
@@ -134,8 +133,8 @@ const RecordForm: React.FC<AddRecordFormProps> = ({
           onChange={(e) => handleInputChange(e.target.value, 'age')}
           inputProps={{ min: 1, max: 150 }}
           required
-          error={ageError} // Показываем ошибку, если поле не валидно
-          helperText={ageError && ageHelperText} // Показываем сообщение об ошибке
+          error={ageError}
+          helperText={ageError && ageHelperText}
           onBlur={handleAgeBlur}
         />
          <FormControl className="form-select" style={selectStyle} error={cityError}>

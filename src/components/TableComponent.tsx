@@ -5,7 +5,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Grid,
 } from '@mui/material';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -51,8 +50,12 @@ const TableComponent: React.FC = () => {
 
   return (
     <div>
-      <Grid container spacing={2} justifyContent="center">
-      <Grid item xs={12} sm={10} className="table-container">
+      {data.length === 0 ? (
+        <div className="empty-table-message">
+          <p>The main table is empty.</p>
+          <p>Please fill out the form and click "Add" to add records.</p>
+        </div>
+      ) : (
         <TableContainer component={Paper}>
           <Table className="table">
             <TableHead>
@@ -72,14 +75,11 @@ const TableComponent: React.FC = () => {
                   <TableCell>{record.age}</TableCell>
                   <TableCell>{record.city}</TableCell>
                   <TableCell align="center">
-                    <Button
-                      className="table-edit-btn"
-                      onClick={() => handleEditClick(record)}
-                    >
+                    <Button onClick={() => handleEditClick(record)}>
                       Edit
                     </Button>
                     <Button
-                      className="table-delete-btn"
+                      color="error"
                       onClick={() => handleDeleteClick(record.id)}
                     >
                       Delete
@@ -90,7 +90,7 @@ const TableComponent: React.FC = () => {
             </TableBody>
           </Table>
         </TableContainer>
-      </Grid>
+      )}
       {/* Delete Confirmation Dialog */}
       <Dialog open={deleteRecordId !== null} onClose={() => setDeleteRecordId(null)}>
         <DialogTitle>Confirm Delete</DialogTitle>
@@ -110,7 +110,6 @@ const TableComponent: React.FC = () => {
           <RecordForm formData={editRecord} setFormData={setEditRecord} onSave={handleEditRecord} submitText="Agree"/>
         </DialogContent>
       </Dialog>
-      </Grid>
     </div>
   );
 };
