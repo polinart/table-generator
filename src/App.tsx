@@ -1,149 +1,94 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState }  from 'react';
 import { Grid, Button } from '@mui/material';
 import './App.scss';
-import { Record } from './interfaces/Record';
+import { Record, emptyRecord } from './interfaces/Record';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from './store/store';
+import { addRecord } from './slices/tablesDataSlice';
+import { editCopiedRecord, deleteCopiedRecord, deleteCopiedTable, addCopiedTable } from './slices/copiedTablesSlices';  
 import TableComponent from './components/TableComponent';
-import AddRecordForm from './components/AddRecordForm';
-import { tableDataSubject, tableDataKey } from './data/tableDataSubject';
-import { BehaviorSubject } from 'rxjs';
+import CopiedTablesComponent from './components/CopiedTablesComponent';
+import RecordForm from './components/RecordForm';
 
 const App: React.FC = () => {
-  const [copiedTables, setCopiedTables] = useState<BehaviorSubject<Record[]>[]>([]);
-
-
-  useEffect(() => {
-    // Подписываемся на обновления данных из copiedTables
-    const subscription = new BehaviorSubject(copiedTables).subscribe((data) => {
-      // Преобразуем данные в обычный массив перед сохранением в localStorage
-      const dataToSave = data.map((behaviorSubject) => behaviorSubject.getValue());
-      localStorage.setItem("copiedTables", JSON.stringify(dataToSave));
-    });
-  
-    // Отписываемся от подписки при размонтировании компонента
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [copiedTables]);
-  
-  useEffect(() => {
-    // Загрузка данных из localStorage при монтировании компонента
-    const storedData = localStorage.getItem("copiedTables");
-    if (storedData) {
-      const parsedData: Record[][] = JSON.parse(storedData);
-      // Преобразуем массив данных в массив BehaviorSubject
-      const copiedTableSubjects = parsedData.map((data) => new BehaviorSubject<Record[]>(data));
-      setCopiedTables(copiedTableSubjects);
-    }
-  }, []);
-
-  // Загрузка данных из localStorage при монтировании компонента
-  useEffect(() => {
-    const storedData = localStorage.getItem(tableDataKey);
-    if (storedData) {
-      tableDataSubject.next(JSON.parse(storedData));
-    }
-  }, []);
+  const [formData, setFormData] = useState<Record>(emptyRecord);
+  const tableData = useSelector((state: RootState) => state.tablesData.data);
+  const copiedTables = useSelector((state: RootState) => state.copiedTables.data);
+  const dispatch = useDispatch();
+  const copiedTableRef = useRef<HTMLDivElement>(null);
 
   const handleAddRecord = (record: Record) => {
-    // Добавляем новую запись в BehaviorSubject
-    tableDataSubject.next([...tableDataSubject.getValue(), record]);
+    dispatch(addRecord(record));
   };
-
-  const handleEditRecord = (editedRecord: Record) => {
-    // Обновляем данные в BehaviorSubject, заменяя старую запись на отредактированную
-    const newData = tableDataSubject.getValue().map((record) =>
-      record.id === editedRecord.id ? editedRecord : record
-    );
-    tableDataSubject.next(newData);
-  };
-
-  const handleDeleteRecord = (id: number) => {
-    // Удаляем запись из таблицы
-    const filteredData = tableDataSubject.getValue().filter((record) => record.id !== id);
-    tableDataSubject.next(filteredData);
-  };
-
-  useEffect(() => {
-    // Подписываемся на обновления данных из tableDataSubject
-    const subscription = tableDataSubject.subscribe((data) => {
-      // Сохраняем данные в localStorage при изменении tableDataSubject
-      localStorage.setItem(tableDataKey, JSON.stringify(data));
-    });
-
-    // Отписываемся от подписки при размонтировании компонента
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, []);
 
   const handleCopyTable = () => {
-    const newCopiedTable = [...tableDataSubject.getValue()]; // Копируем данные из главной таблицы
-    const newCopiedTableSubject = new BehaviorSubject<Record[]>(newCopiedTable); // Создаем новый BehaviorSubject с скопированными данными
-    setCopiedTables((prevCopiedTables) => [...prevCopiedTables, newCopiedTableSubject]); // Добавляем новый BehaviorSubject в массив copiedTables
+    dispatch(addCopiedTable([...tableData]));
+    setTimeout(() => {
+      copiedTableRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
+
+  const handleDeleteCopiedRecord = (tableIndex: number, id: number) => {
+    dispatch(deleteCopiedRecord({tableIndex, id}));
+  };
+
+  const handleEditCopiedRecord = (tableIndex: number, record: Record) => {
+    dispatch(editCopiedRecord({tableIndex, editedRecord: record}));
   };
 
   const handleDeleteCopiedTable = (tableIndex: number) => {
-    setCopiedTables((prevCopiedTables) => {
-      const updatedCopiedTables = [...prevCopiedTables];
-      updatedCopiedTables.splice(tableIndex, 1); // Удаляем скопированную таблицу по индексу
-      return updatedCopiedTables;
-    });
-  };
-
-  const handleEditCopiedRecord = (editedRecord: Record, tableIndex: number) => {
-    const editedData = copiedTables[tableIndex].getValue().map((record) =>
-      record.id === editedRecord.id ? editedRecord : record
-    );
-    copiedTables[tableIndex].next(editedData);
-  };
-
-  const handleDeleteCopiedRecord = (id: number, tableIndex: number) => {
-    const filteredData = copiedTables[tableIndex].getValue().filter((record) => record.id !== id);
-    copiedTables[tableIndex].next(filteredData);
+    dispatch(deleteCopiedTable(tableIndex));
   };
 
   return (
-    <div className="app">
-      <Grid container spacing={2} justifyContent="center">
-        <Grid item xs={12} sm={4}>
-          <AddRecordForm onSave={handleAddRecord} />
+      <div className="app">
+        <Grid container spacing={2} justifyContent="center">
+          <Grid item sm={4}>
+          <h2>Add new record to Main table - Form 1</h2>
+          <RecordForm formData={formData} setFormData={setFormData} onSave={handleAddRecord} />
+          </Grid>
+          <Grid item xs={12} sm={10}>
+            <Grid container justifyContent="flex-end">
+              <Button variant="contained" color="primary" className='copy-button' onClick={handleCopyTable} disabled={tableData.length < 1}>
+                Copy Table
+              </Button>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} sm={10} className="table-container">
+            <TableComponent />
+          </Grid>
         </Grid>
-        <Grid item xs={12} sm={10} className='table-container'>
-          <Button variant="contained" color="primary" onClick={handleCopyTable}>
-            Copy Table
-        </Button>
-          <TableComponent
-            dataSubject={tableDataSubject}
-            onEditRecord={handleEditRecord}
-            onDeleteRecord={handleDeleteRecord}
-          />
+        <Grid container spacing={2} justifyContent="center">
+          <Grid item sm={6}>
+            <h2>Add new record to Main table - Form 2</h2>
+            <RecordForm formData={formData} setFormData={setFormData} onSave={handleAddRecord} inputWidth='half'/>
+          </Grid>
         </Grid>
-      </Grid>
-      {copiedTables.length > 0 &&
-        copiedTables.map((copiedTable, index) => (
-          <div key={index}>
-            <h2>Copied Table {index + 1}:</h2>
+        <Grid container spacing={2} justifyContent="center">
+          <Grid item xs={12} sm={10}>
+            <h2>Copied tables list</h2>
+          </Grid>
+        </Grid>
+          {copiedTables.length < 1 ? (
             <Grid container spacing={2} justifyContent="center">
-              <Grid item xs={12} sm={10} className='table-container'>
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  onClick={() => handleDeleteCopiedTable(index)} // Обработчик для кнопки "Delete table"
-                >
-                  Delete Table
-                </Button>
-                <TableComponent
-                  dataSubject={copiedTable}
-                  onEditRecord={(record) => handleEditCopiedRecord(record, index)}
-                  onDeleteRecord={(id) => handleDeleteCopiedRecord(id, index)}
-                />
+              <Grid item xs={12} sm={10}>
+                <div className="empty-table-message">
+                  <p>No copied tables yet.</p>
+                  <p>Please click "COPY TABLE" to add tables.</p>
+                </div>
               </Grid>
             </Grid>
-          </div>
-        ))}
-    </div>
+          ) : (
+            <CopiedTablesComponent
+              copiedTables={copiedTables}
+              onEditRecord={handleEditCopiedRecord}
+              onDeleteRecord={handleDeleteCopiedRecord}
+              onDeleteTable={handleDeleteCopiedTable}
+              lastTableRef={copiedTableRef}
+            />
+          )}
+      </div>
   );
 };
-
 
 export default App;
