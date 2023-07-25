@@ -49,7 +49,7 @@ const App: React.FC = () => {
           </Grid>
           <Grid item xs={12} sm={10}>
             <Grid container justifyContent="flex-end">
-              <Button variant="contained" color="primary" className='copy-button' onClick={handleCopyTable}>
+              <Button variant="contained" color="primary" className='copy-button' onClick={handleCopyTable} disabled={tableData.length < 1}>
                 Copy Table
               </Button>
             </Grid>
@@ -69,14 +69,24 @@ const App: React.FC = () => {
             <h2>Copied tables list</h2>
           </Grid>
         </Grid>
-        {copiedTables.length > 0 &&
-          <CopiedTablesComponent
-            copiedTables={copiedTables}
-            onEditRecord={handleEditCopiedRecord}
-            onDeleteRecord={handleDeleteCopiedRecord}
-            onDeleteTable={handleDeleteCopiedTable}
-            lastTableRef={copiedTableRef}
-          />}
+          {copiedTables.length < 1 ? (
+            <Grid container spacing={2} justifyContent="center">
+              <Grid item xs={12} sm={10}>
+                <div className="empty-table-message">
+                  <p>No copied tables yet.</p>
+                  <p>Please click "COPY TABLE" to add tables.</p>
+                </div>
+              </Grid>
+            </Grid>
+          ) : (
+            <CopiedTablesComponent
+              copiedTables={copiedTables}
+              onEditRecord={handleEditCopiedRecord}
+              onDeleteRecord={handleDeleteCopiedRecord}
+              onDeleteTable={handleDeleteCopiedTable}
+              lastTableRef={copiedTableRef}
+            />
+          )}
       </div>
   );
 };

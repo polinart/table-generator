@@ -53,7 +53,7 @@ const TableComponent: React.FC = () => {
       {data.length === 0 ? (
         <div className="empty-table-message">
           <p>The main table is empty.</p>
-          <p>Please fill out the form and click "Add" to add records.</p>
+          <p>Please fill out the form (Form 1 or Form 2) and click "ADD" to add records.</p>
         </div>
       ) : (
         <TableContainer component={Paper}>
