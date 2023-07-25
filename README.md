@@ -1,6 +1,7 @@
 # Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). 
+This is table geneator app - There is two forms to add records to the main table, copy table, edit and remove functionalty.
 
 ## Available Scripts
 
